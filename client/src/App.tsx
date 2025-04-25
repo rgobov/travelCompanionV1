@@ -8,6 +8,7 @@ import Header from "@/components/Header";
 import Home from "@/pages/home";
 import TourCreator from "@/pages/tour-creator";
 import TourList from "@/pages/tour-list";
+import TourView from "@/pages/tour-view";
 
 function Router() {
   return (
@@ -17,6 +18,7 @@ function Router() {
         <Route path="/" component={Home} />
         <Route path="/create" component={TourCreator} />
         <Route path="/tours" component={TourList} />
+        <Route path="/tour/:id" component={TourView} />
         <Route component={NotFound} />
       </Switch>
     </div>

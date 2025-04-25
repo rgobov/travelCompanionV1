@@ -24,9 +24,7 @@ export default function TourList() {
   };
   
   const handleViewTour = (tourId: number) => {
-    // For MVP just redirect to create/edit page
-    // In a real app, we would have a separate view page
-    setLocation(`/create?tour=${tourId}`);
+    setLocation(`/tour/${tourId}`);
   };
   
   const handleEditTour = (tourId: number) => {

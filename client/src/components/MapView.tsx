@@ -13,10 +13,11 @@ interface MapViewProps {
     longitude: string;
     order?: number;
   }>;
-  onMapClick: (coordinates: Coordinate) => void;
+  onMapClick?: (coordinates: Coordinate) => void;
   selectedPointId?: number;
   onMarkerClick: (pointId: number) => void;
   defaultCenter?: Coordinate;
+  readOnly?: boolean;
 }
 
 export default function MapView({ 
@@ -24,7 +25,8 @@ export default function MapView({
   onMapClick,
   selectedPointId,
   onMarkerClick,
-  defaultCenter = { lat: 48.8566, lng: 2.3522 } // Default to Paris
+  defaultCenter = { lat: 48.8566, lng: 2.3522 }, // Default to Paris
+  readOnly = false
 }: MapViewProps) {
   const mapRef = useRef<L.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -47,10 +49,12 @@ export default function MapView({
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    // Handle map clicks
-    map.on('click', (e) => {
-      onMapClick({ lat: e.latlng.lat, lng: e.latlng.lng });
-    });
+    // Handle map clicks if not in readOnly mode
+    if (!readOnly && onMapClick) {
+      map.on('click', (e) => {
+        onMapClick({ lat: e.latlng.lat, lng: e.latlng.lng });
+      });
+    }
 
     // Store the map reference
     mapRef.current = map;
@@ -63,7 +67,7 @@ export default function MapView({
         mapRef.current = null;
       }
     };
-  }, [defaultCenter]);
+  }, [defaultCenter, readOnly, onMapClick]);
 
   // Update markers when points change
   useEffect(() => {
@@ -205,7 +209,9 @@ export default function MapView({
   return (
     <div className="bg-white rounded-lg shadow-sm p-4 h-full">
       <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-900">Interactive Map</h3>
+        <h3 className="text-lg font-semibold text-gray-900">
+          {readOnly ? "Карта тура" : "Интерактивная карта"}
+        </h3>
         <div className="flex items-center space-x-2">
           <Button 
             variant="outline" 
@@ -214,7 +220,7 @@ export default function MapView({
             className="text-gray-700"
           >
             <Home className="h-4 w-4 mr-1" />
-            Center
+            Центрировать
           </Button>
           <Button 
             variant="outline" 
@@ -223,7 +229,7 @@ export default function MapView({
             className="text-gray-700"
           >
             <RotateCcw className="h-4 w-4 mr-1" />
-            Reset
+            Сбросить
           </Button>
         </div>
       </div>
@@ -234,6 +240,18 @@ export default function MapView({
           className="w-full h-full rounded-lg border border-gray-300"
         ></div>
       </div>
+      
+      {readOnly && (
+        <div className="mt-3 text-sm text-gray-500">
+          <p className="text-center">Нажмите на маркер, чтобы увидеть подробности</p>
+        </div>
+      )}
+      
+      {!readOnly && (
+        <div className="mt-3 text-sm text-gray-500">
+          <p className="text-center">Нажмите на карту, чтобы добавить новую точку интереса</p>
+        </div>
+      )}
     </div>
   );
 }
