@@ -22,57 +22,57 @@ public class DevDataInitializer {
     private final UserService userService;
     private final TourService tourService;
     private final PointOfInterestService pointOfInterestService;
-    
+
     @Bean
     public CommandLineRunner initDevData() {
         return args -> {
             if (userService.existsByUsername("user")) {
-                return; // Данные уже инициализированы
+                return;
             }
-            
-            // Создаем тестового пользователя
+
+            // 1. Создаем пользователя
             UserDto userDto = new UserDto();
             userDto.setUsername("user");
             userDto.setPassword("password");
-            User user = userService.createUser(userDto);
-            
-            // Создаем тестовый тур
+            User user = userService.createUserAndGetEntity(userDto);
+
+            // 2. Создаем тур (получаем TourDto)
             TourDto tourDto = new TourDto();
             tourDto.setName("Прогулка по центру Москвы");
             tourDto.setLocation("Москва");
-            tourDto.setDescription("Экскурсия по главным достопримечательностям центра Москвы");
+            tourDto.setDescription("Экскурсия по главным достопримечательностям");
             tourDto.setCreatedById(user.getId());
-            Tour tour = tourService.createTour(tourDto);
-            
-            // Создаем тестовые точки интереса
+
+            TourDto createdTourDto = tourService.createTour(tourDto);
+
+            // 3. Создаем точки интереса (используем ID из createdTourDto)
             PointOfInterestDto point1 = new PointOfInterestDto();
-            point1.setTourId(tour.getId());
+            point1.setTourId(createdTourDto.getId());
             point1.setName("Красная площадь");
             point1.setDescription("Главная площадь Москвы");
             point1.setLatitude("55.7539");
             point1.setLongitude("37.6208");
             point1.setOrder(1);
             pointOfInterestService.createPoint(point1);
-            
+
             PointOfInterestDto point2 = new PointOfInterestDto();
-            point2.setTourId(tour.getId());
+            point2.setTourId(createdTourDto.getId()); // Используем createdTourDto вместо tour
             point2.setName("Храм Василия Блаженного");
             point2.setDescription("Православный храм на Красной площади");
             point2.setLatitude("55.7525");
             point2.setLongitude("37.6231");
             point2.setOrder(2);
             pointOfInterestService.createPoint(point2);
-            
+
             PointOfInterestDto point3 = new PointOfInterestDto();
-            point3.setTourId(tour.getId());
+            point3.setTourId(createdTourDto.getId()); // Используем createdTourDto вместо tour
             point3.setName("ГУМ");
             point3.setDescription("Главный универсальный магазин");
             point3.setLatitude("55.7546");
             point3.setLongitude("37.6215");
             point3.setOrder(3);
             pointOfInterestService.createPoint(point3);
-            
+
             System.out.println("Тестовые данные успешно инициализированы!");
         };
-    }
-} 
+    }}

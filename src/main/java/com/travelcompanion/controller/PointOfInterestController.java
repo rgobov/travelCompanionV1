@@ -10,50 +10,47 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class PointOfInterestController {
-    
+
     private final PointOfInterestService pointOfInterestService;
-    
+
     @GetMapping("/tours/{tourId}/points")
-    public ResponseEntity<List<PointOfInterest>> getPointsByTourId(@PathVariable Long tourId) {
-        List<PointOfInterest> points = pointOfInterestService.getPointsByTourId(tourId);
+    public ResponseEntity<List<PointOfInterestDto>> getPointsByTourId(@PathVariable Long tourId) {
+        List<PointOfInterestDto> points = pointOfInterestService.getPointsByTourId(tourId);
         return ResponseEntity.ok(points);
     }
-    
+
     @GetMapping("/points/{id}")
-    public ResponseEntity<PointOfInterest> getPointById(@PathVariable Long id) {
-        PointOfInterest point = pointOfInterestService.getPointById(id);
+    public ResponseEntity<PointOfInterestDto> getPointById(@PathVariable Long id) {
+        PointOfInterestDto point = pointOfInterestService.getPointById(id);
         return ResponseEntity.ok(point);
     }
-    
+
     @PostMapping("/tours/{tourId}/points")
-    public ResponseEntity<PointOfInterest> createPoint(
+    public ResponseEntity<PointOfInterestDto> createPoint(
             @PathVariable Long tourId,
             @Valid @RequestBody PointOfInterestDto pointDto) {
-        
-        // Убедимся, что tourId в URL совпадает с tourId в DTO
+
         pointDto.setTourId(tourId);
-        
-        PointOfInterest point = pointOfInterestService.createPoint(pointDto);
-        return new ResponseEntity<>(point, HttpStatus.CREATED);
+        PointOfInterestDto createdPoint = pointOfInterestService.createPoint(pointDto);
+        return new ResponseEntity<>(createdPoint, HttpStatus.CREATED);
     }
-    
+
     @PutMapping("/points/{id}")
-    public ResponseEntity<PointOfInterest> updatePoint(
+    public ResponseEntity<PointOfInterestDto> updatePoint(
             @PathVariable Long id,
             @RequestBody PointOfInterestDto pointDto) {
-        
-        PointOfInterest point = pointOfInterestService.updatePoint(id, pointDto);
-        return ResponseEntity.ok(point);
+
+        PointOfInterestDto updatedPoint = pointOfInterestService.updatePoint(id, pointDto);
+        return ResponseEntity.ok(updatedPoint);
     }
-    
+
     @DeleteMapping("/points/{id}")
     public ResponseEntity<Void> deletePoint(@PathVariable Long id) {
         pointOfInterestService.deletePoint(id);
         return ResponseEntity.noContent().build();
     }
-} 
+}

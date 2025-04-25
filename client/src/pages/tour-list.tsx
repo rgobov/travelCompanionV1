@@ -18,16 +18,21 @@ export default function TourList() {
   } = useQuery<Tour[]>({
     queryKey: ['/api/tours'],
   });
-  
+
   const handleCreateTour = () => {
     setLocation("/create");
+
   };
-  
+
   const handleViewTour = (tourId: number) => {
+    console.log('[DEBUG] Navigating to VIEW tour:', tourId);
+
     setLocation(`/tour/${tourId}`);
+
   };
   
   const handleEditTour = (tourId: number) => {
+    console.log('[DEBUG] Navigating to EDIT tour:', tourId); // Добавьте это
     setLocation(`/create?tour=${tourId}`);
   };
   

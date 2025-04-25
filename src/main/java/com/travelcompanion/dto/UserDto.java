@@ -18,10 +18,3 @@ public class UserDto {
     private String password;
 }
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-class UserResponseDto {
-    private Long id;
-    private String username;
-} 
